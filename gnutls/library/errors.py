@@ -57,7 +57,7 @@ class ErrorHandler(object):
 from gnutls.library import functions
 from ctypes import c_int, c_long
 
-for func in (obj for name, obj in functions.__dict__.iteritems() if name in functions.__all__ and obj.restype in (c_int, c_long)):
+for func in (obj for name, obj in functions.__dict__.items() if name in functions.__all__ and obj.restype in (c_int, c_long)):
     func.errcheck = ErrorHandler.check_status
 
 del c_int, c_long, func, functions

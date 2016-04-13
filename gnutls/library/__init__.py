@@ -57,23 +57,21 @@ def load_library(abi_versions):
 
 libgnutls = load_library(abi_versions=(28, 30))  # will use the highest of the available ABI versions
 
+from . import constants
+from . import errors
+from . import functions
+from . import types
 
-from gnutls.library import constants
-from gnutls.library import errors
-from gnutls.library import functions
-from gnutls.library import types
 
-
-__need_version__ = '3.2.0'
+__need_version__ = b'3.2.0'
 
 if functions.gnutls_check_version(__need_version__) is None:
     version = functions.gnutls_check_version(None)
     raise RuntimeError("Found GNUTLS library version %s, but at least version %s is required" % (version, __need_version__))
 
 # calling gnutls_global_init is no longer required starting with gnutls 3.3
-if functions.gnutls_check_version('3.3') is None:
+if functions.gnutls_check_version(b'3.3') is None:
     libgnutls.gnutls_global_init()
 
 
 del get_system_name, library_locations, load_library
-

@@ -30,12 +30,12 @@ class EchoProtocol(LineOnlyReceiver):
             peer_name = session.peer_certificate.subject
         except AttributeError:
             peer_name = 'Unknown'
-        print '\nNew connection from:', peer_name
-        print 'Protocol:     ', session.protocol
-        print 'KX algorithm: ', session.kx_algorithm
-        print 'Cipher:       ', session.cipher
-        print 'MAC algorithm:', session.mac_algorithm
-        print 'Compression:  ', session.compression
+        print('\nNew connection from:', peer_name)
+        print('Protocol:     ', session.protocol)
+        print('KX algorithm: ', session.kx_algorithm)
+        print('Cipher:       ', session.cipher)
+        print('MAC algorithm:', session.mac_algorithm)
+        print('Compression:  ', session.compression)
 
     def lineReceived(self, line):
         if line == 'quit':
@@ -45,7 +45,7 @@ class EchoProtocol(LineOnlyReceiver):
 
     def connectionLost(self, reason):
         if options.verbose and reason.type != ConnectionDone:
-            print "Connection was lost:", str(reason.value)
+            print("Connection was lost:", str(reason.value))
 
 
 class EchoFactory(Factory):

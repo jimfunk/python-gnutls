@@ -41,7 +41,7 @@ class RecurrentCall(object):
             self.now, self.next = self.next, self.next + self.period
         result = self.func(*self.args, **self.kwargs)
         if result is KeepRunning:
-            delay = max(self.next-time(), 0)
+            delay = max(self.__next__-time(), 0)
             self.callid = reactor.callLater(delay, self)
     def cancel(self):
         if self.callid is not None:
@@ -77,7 +77,7 @@ class TLSMixin:
             return tcp.Connection.doRead(self)
         except (OperationWouldBlock, OperationInterrupted):
             return
-        except GNUTLSError, e:
+        except GNUTLSError as e:
             return e
 
     def writeSomeData(self, data):
@@ -87,7 +87,7 @@ class TLSMixin:
             return self.writeSomeData(data)
         except OperationWouldBlock:
             return 0
-        except GNUTLSError, e:
+        except GNUTLSError as e:
             return e
 
     def _sendCloseReason(self, reason):
@@ -117,11 +117,11 @@ class TLSMixin:
         self.stopWriting()
         try:
             self._sendCloseAlert(SHUT_WR)
-        except OperationWouldBlock, e:
+        except OperationWouldBlock as e:
             if self.socket.interrupted_while_writing:
                 self.startWriting()
                 return
-        except Exception, e:
+        except Exception as e:
             return e
         del self.doWrite
 
@@ -153,7 +153,7 @@ class TLSClient(TLSMixin, tcp.Client):
             return
         try:
             self.context.credentials.verify_callback(self.socket.peer_certificate)
-        except Exception, e:
+        except Exception as e:
             self.loseConnection(e)
             return
         else:
@@ -166,7 +166,7 @@ class TLSClient(TLSMixin, tcp.Client):
             return
         try:
             session.verify_peer()
-        except Exception, e:
+        except Exception as e:
             preverify_status = e
         else:
             preverify_status = CertificateOK
@@ -184,7 +184,7 @@ class TLSClient(TLSMixin, tcp.Client):
             if self.socket.interrupted_while_writing:
                 self.startWriting()
             return
-        except GNUTLSError, e:
+        except GNUTLSError as e:
             del self.doRead
             self.failIfNotConnected(err = e)
             return
@@ -195,11 +195,11 @@ class TLSClient(TLSMixin, tcp.Client):
         
         try:
             self._verifyPeer()
-        except GNUTLSError, e:
+        except GNUTLSError as e:
             self.closeTLSSession(e)
             self.failIfNotConnected(err = e)
             return
-        except Exception, e:
+        except Exception as e:
             self.closeTLSSession(e)
             self.failIfNotConnected(err = error.getConnectError(str(e)))
             return
@@ -258,7 +258,7 @@ class TLSServer(TLSMixin, tcp.Server):
             return
         try:
             self.context.credentials.verify_callback(self.socket.peer_certificate)
-        except Exception, e:
+        except Exception as e:
             self.loseConnection(e)
             return
         else:
@@ -271,7 +271,7 @@ class TLSServer(TLSMixin, tcp.Server):
             return
         try:
             session.verify_peer()
-        except Exception, e:
+        except Exception as e:
             preverify_status = e
         else:
             preverify_status = CertificateOK
@@ -289,7 +289,7 @@ class TLSServer(TLSMixin, tcp.Server):
             if self.socket.interrupted_while_writing:
                 self.startWriting()
             return
-        except GNUTLSError, e:
+        except GNUTLSError as e:
             del self.doRead
             return e
         
@@ -300,7 +300,7 @@ class TLSServer(TLSMixin, tcp.Server):
         
         try:
             self._verifyPeer()
-        except Exception, e:
+        except Exception as e:
             self.loseConnection(e)
             return
         

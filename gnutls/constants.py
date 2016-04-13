@@ -31,7 +31,7 @@ class GNUTLSConstant(int):
 
 ## Generate all exported constants
 code = '\n'.join(["%s = GNUTLSConstant('%s')" % (name, name) for name in __all__])
-exec code in locals(), globals()
-del code, name
+exec(code, locals(), globals())
+del code
 
 del constants

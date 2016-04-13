@@ -21,7 +21,7 @@ from application import log
 
 # Private - shared between all ServerContextFactories, counts up to
 # provide a unique session id for each context
-_sessionCounter = itertools.count().next
+_sessionCounter = itertools.count().__next__
 
 
 class _SSLApplicationData(object):
@@ -119,7 +119,7 @@ class OpenSSLContextFactory(object):
 class Certificate(object):
     """Configuration data type. Used to create a OpenSSL.crypto.X509 object from a file given in the configuration file."""
     def __new__(typ, value):
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             path = process.config_file(value)
             if path is None:
                 log.warn("Certificate file '%s' is not readable" % value)
@@ -132,19 +132,19 @@ class Certificate(object):
             try:
                 try:
                     return crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
-                except crypto.Error, e:
+                except crypto.Error as e:
                     log.warn("Certificate file '%s' could not be loaded: %s" % (value, str(e)))
                     return None
             finally:
                 f.close()
         else:
-            raise TypeError, 'value should be a string'
+            raise TypeError('value should be a string')
 
 
 class PrivateKey(object):
     """Configuration data type. Used to create a OpenSSL.crypto.PKey object from a file given in the configuration file."""
     def __new__(typ, value):
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             path = process.config_file(value)
             if path is None:
                 log.warn("Private key file '%s' is not readable" % value)
@@ -157,13 +157,13 @@ class PrivateKey(object):
             try:
                 try:
                     return crypto.load_privatekey(crypto.FILETYPE_PEM, f.read())
-                except crypto.Error, e:
+                except crypto.Error as e:
                     log.warn("Private key file '%s' could not be loaded: %s" % (value, str(e)))
                     return None
             finally:
                 f.close()
         else:
-            raise TypeError, 'value should be a string'
+            raise TypeError('value should be a string')
 
 
 class EchoProtocol(LineOnlyReceiver):
@@ -235,8 +235,8 @@ reactor.run()
 
 duration = time() - start_time
 rate = count / duration
-print "time={:.2f} sec; rate={} requests/sec with {}:{}".format(duration, int(rate), host, port)
+print("time={:.2f} sec; rate={} requests/sec with {}:{}".format(duration, int(rate), host, port))
 
 if failed > 0:
-    print "{} out of {} connections have failed".format(failed, count)
+    print("{} out of {} connections have failed".format(failed, count))
 

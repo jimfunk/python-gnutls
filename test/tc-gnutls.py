@@ -95,10 +95,10 @@ reactor.run()
 
 duration = time() - start_time
 rate = count / duration
-print "time={:.2f} sec; rate={} requests/sec with {}:{}".format(duration, int(rate), host, port)
+print("time={:.2f} sec; rate={} requests/sec with {}:{}".format(duration, int(rate), host, port))
 
 if failed > 0:
-    print "{} out of {} connections have failed".format(failed, count)
+    print("{} out of {} connections have failed".format(failed, count))
 
 if options.memory:
     memory_dump()

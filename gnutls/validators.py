@@ -76,7 +76,7 @@ class TypeValidator(Validator):
 class MultiTypeValidator(TypeValidator):
     @staticmethod
     def can_validate(obj):
-        return isinstance(obj, tuple) and not filter(lambda x: not isclass(x), obj)
+        return isinstance(obj, tuple) and not [x for x in obj if not isclass(x)]
 
 class OneOfValidator(Validator):
     def __init__(self, typ):
@@ -94,7 +94,7 @@ class ListOfValidator(Validator):
     def __init__(self, typ):
         self.type = typ.type
     def check(self, value):
-        return isinstance(value, (tuple, list)) and not filter(lambda x: not isinstance(x, self.type), value)
+        return isinstance(value, (tuple, list)) and not [x for x in value if not isinstance(x, self.type)]
     @staticmethod
     def can_validate(obj):
         return isinstance(obj, list_of)
@@ -109,7 +109,7 @@ class ComplexValidator(Validator):
         return bool(sum(t.check(value) for t in self.type))
     @staticmethod
     def can_validate(obj):
-        return isinstance(obj, tuple) and not filter(lambda x: Validator.get(x) is None, obj)
+        return isinstance(obj, tuple) and not [x for x in obj if Validator.get(x) is None]
     @property
     def name(self):
         return self.join_names([x.name for x in self.type])
@@ -135,7 +135,7 @@ class one_of(object):
 
 class list_of(object):
     def __init__(self, *args):
-        if filter(lambda x: not isclass(x), args):
+        if [x for x in args if not isclass(x)]:
             raise TypeError("list_of arguments must be types")
         if len(args) == 1:
             self.type = args[0]
@@ -163,9 +163,9 @@ def preserve_signature(func):
         if constants:
             ## import the required GNUTLSConstants used as function default arguments
             code = "from gnutls.constants import %s\n" % ', '.join(c.name for c in constants)
-            exec code in locals(), locals()
+            exec(code, locals(), locals())
         code = "def %s(%s): return wrapper(%s)\nnew_wrapper = %s\n" % (func.__name__, signature, parameters, func.__name__)
-        exec code in locals(), locals()
+        exec(code, locals(), locals())
         new_wrapper.__name__ = func.__name__
         new_wrapper.__doc__ = func.__doc__
         new_wrapper.__module__ = func.__module__

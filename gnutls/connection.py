@@ -381,7 +381,7 @@ class ServerSession(Session):
         data_length = c_size_t(256)
         data = create_string_buffer(data_length.value)
         hostname_type = c_uint()
-        for i in xrange(2**16):
+        for i in range(2**16):
             try:
                 gnutls_server_name_get(self._c_object, data, byref(data_length), byref(hostname_type), i)
             except RequestedDataNotAvailable:
@@ -400,7 +400,7 @@ class ServerSessionFactory(object):
 
     def __init__(self, socket, context, session_class=ServerSession):
         if not issubclass(session_class, ServerSession):
-            raise TypeError, "session_class must be a subclass of ServerSession"
+            raise TypeError("session_class must be a subclass of ServerSession")
         self.socket = socket
         self.context = context
         self.session_class = session_class

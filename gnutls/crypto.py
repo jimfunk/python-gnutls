@@ -27,8 +27,8 @@ class X509NameMeta(type):
                   'email': 'EMAIL'}
     def __new__(cls, name, bases, dic):
         instance = type.__new__(cls, name, bases, dic)
-        instance.ids = X509NameMeta.long_names.values()
-        for long_name, short_name in X509NameMeta.long_names.items():
+        instance.ids = list(X509NameMeta.long_names.values())
+        for long_name, short_name in list(X509NameMeta.long_names.items()):
             ## Map a long_name property to the short_name attribute
             cls.add_property(instance, long_name, short_name)
         return instance
@@ -36,9 +36,7 @@ class X509NameMeta(type):
         setattr(instance, name, property(lambda self: getattr(self, short_name, None)))
 
 
-class X509Name(str):
-    __metaclass__ = X509NameMeta
-
+class X509Name(str, metaclass=X509NameMeta):
     def __init__(self, dname):
         str.__init__(self)
         pairs = [x.replace('\,', ',') for x in re.split(r'(?<!\\),\s*', dname)]
@@ -62,7 +60,7 @@ class AlternativeNames(object):
                  'ip': GNUTLS_SAN_IPADDRESS, 'other': GNUTLS_SAN_OTHERNAME, 'dn': GNUTLS_SAN_DN}
     def __init__(self, names):
         object.__init__(self)
-        for name, key in self.__slots__.iteritems():
+        for name, key in self.__slots__.items():
             setattr(self, name, tuple(names.get(key, ())))
 
 
@@ -113,7 +111,7 @@ class X509Certificate(object):
         names = {}
         size = c_size_t(256)
         alt_name = create_string_buffer(size.value)
-        for i in xrange(65536):
+        for i in range(65536):
             try:
                 name_type = gnutls_x509_crt_get_subject_alt_name(self._c_object, i, alt_name, byref(size), None)
             except RequestedDataNotAvailable:

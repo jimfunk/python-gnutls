@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 import os
+try:
+    import setuptools
+except ImportError:
+    pass
 
 from distutils.core import setup
 from gnutls import __info__ as package_info
