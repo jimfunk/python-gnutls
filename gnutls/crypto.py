@@ -6,7 +6,6 @@ __all__ = ['X509Name', 'X509Certificate', 'X509PrivateKey', 'X509Identity', 'X50
 import re
 from ctypes import *
 
-from gnutls.validators import method_args, one_of
 from gnutls.constants import X509_FMT_DER, X509_FMT_PEM
 from gnutls.errors import *
 
@@ -73,7 +72,6 @@ class X509Certificate(object):
         instance._alternative_names = None
         return instance
 
-    @method_args(str, one_of(X509_FMT_PEM, X509_FMT_DER))
     def __init__(self, buf, format=X509_FMT_PEM):
         gnutls_x509_crt_init(byref(self._c_object))
         data = gnutls_datum_t(cast(c_char_p(buf), POINTER(c_ubyte)), c_uint(len(buf)))
@@ -158,14 +156,12 @@ class X509Certificate(object):
     def version(self):
         return gnutls_x509_crt_get_version(self._c_object)
 
-    #@method_args(X509Certificate)
     def has_issuer(self, issuer):
         """Return True if the certificate was issued by the given issuer, False otherwise."""
         if not isinstance(issuer, X509Certificate):
             raise TypeError("issuer must be an X509Certificate object")
         return bool(gnutls_x509_crt_check_issuer(self._c_object, issuer._c_object))
 
-    @method_args(str)
     def has_hostname(self, hostname):
         """Return True if the hostname matches the DNSName/IPAddress subject alternative name extension
            of this certificate, False otherwise."""
@@ -183,7 +179,6 @@ class X509Certificate(object):
         if not self.has_hostname(hostname):
             raise CertificateError("certificate doesn't match hostname")
 
-    @method_args(one_of(X509_FMT_PEM, X509_FMT_DER))
     def export(self, format=X509_FMT_PEM):
         size = c_size_t(4096)
         pemdata = create_string_buffer(size.value)
@@ -202,7 +197,6 @@ class X509PrivateKey(object):
         instance._c_object = gnutls_x509_privkey_t()
         return instance
 
-    @method_args(str, one_of(X509_FMT_PEM, X509_FMT_DER))
     def __init__(self, buf, format=X509_FMT_PEM):
         gnutls_x509_privkey_init(byref(self._c_object))
         data = gnutls_datum_t(cast(c_char_p(buf), POINTER(c_ubyte)), c_uint(len(buf)))
@@ -211,7 +205,6 @@ class X509PrivateKey(object):
     def __del__(self):
         self.__deinit(self._c_object)
 
-    @method_args(one_of(X509_FMT_PEM, X509_FMT_DER))
     def export(self, format=X509_FMT_PEM):
         size = c_size_t(4096)
         pemdata = create_string_buffer(size.value)
@@ -226,14 +219,13 @@ class X509PrivateKey(object):
 
 class X509Identity(object):
     """A X509 identity represents a X509 certificate and private key pair"""
-    
+
     __slots__ = ('cert', 'key')
-    
-    @method_args(X509Certificate, X509PrivateKey)
+
     def __init__(self, cert, key):
         self.cert = cert
         self.key = key
-    
+
     def __setattr__(self, name, value):
         if name in self.__slots__ and hasattr(self, name):
             raise AttributeError("can't set attribute")
@@ -252,7 +244,6 @@ class X509CRL(object):
         instance._c_object = gnutls_x509_crl_t()
         return instance
 
-    @method_args(str, one_of(X509_FMT_PEM, X509_FMT_DER))
     def __init__(self, buf, format=X509_FMT_PEM):
         gnutls_x509_crl_init(byref(self._c_object))
         data = gnutls_datum_t(cast(c_char_p(buf), POINTER(c_ubyte)), c_uint(len(buf)))
@@ -280,7 +271,6 @@ class X509CRL(object):
             gnutls_x509_crl_get_issuer_dn(self._c_object, dname, byref(size))
         return X509Name(dname.value)
 
-    @method_args(X509Certificate)
     def is_revoked(self, cert):
         """Return True if certificate is revoked, False otherwise"""
         return bool(gnutls_x509_crt_check_revocation(cert._c_object, byref(self._c_object), 1))
@@ -290,7 +280,6 @@ class X509CRL(object):
         if self.is_revoked(cert):
             raise CertificateRevokedError("%s was revoked" % cert_name)
 
-    @method_args(one_of(X509_FMT_PEM, X509_FMT_DER))
     def export(self, format=X509_FMT_PEM):
         size = c_size_t(4096)
         pemdata = create_string_buffer(size.value)
@@ -310,7 +299,6 @@ class DHParams(object):
         instance._c_object = gnutls_dh_params_t()
         return instance
 
-    @method_args(int)
     def __init__(self, bits=1024):
         gnutls_dh_params_init(byref(self._c_object))
         gnutls_dh_params_generate2(self._c_object, bits)

@@ -9,7 +9,6 @@ from socket import SHUT_RDWR as SOCKET_SHUT_RDWR
 from _ctypes import PyObj_FromPtr
 from ctypes import *
 
-from gnutls.validators import *
 from gnutls.constants import *
 from gnutls.crypto import *
 from gnutls.errors import *
@@ -76,7 +75,6 @@ class X509Credentials(object):
         instance._c_object = c_object
         return instance
 
-    @method_args((X509Certificate, none), (X509PrivateKey, none), list_of(X509Certificate), list_of(X509CRL), list_of(X509Identity))
     def __init__(self, cert=None, key=None, trusted=[], crl_list=[], identities=[]):
         """Credentials contain a X509 certificate, a private key, a list of trusted CAs and a list of CRLs (all optional).
         An optional list of additional X509 identities can be specified for applications that need more that one identity"""
@@ -103,7 +101,6 @@ class X509Credentials(object):
 
     # Methods to alter the credentials at runtime
 
-    @method_args(list_of(X509Certificate))
     def add_trusted(self, trusted):
         size = len(trusted)
         if size > 0:
@@ -131,7 +128,6 @@ class X509Credentials(object):
 
     def _get_crl_list(self):
         return self._crl_list
-    @method_args(list_of(X509CRL)) 
     def _set_crl_list(self, crl_list):
         self._crl_list = tuple(crl_list)
     crl_list = property(_get_crl_list, _set_crl_list)
@@ -139,7 +135,6 @@ class X509Credentials(object):
 
     def _get_max_verify_length(self):
         return self._max_depth
-    @method_args(int) 
     def _set_max_verify_length(self, max_depth):
         gnutls_certificate_set_verify_limits(self._c_object, self._max_bits, max_depth)
         self._max_depth = max_depth
@@ -148,7 +143,6 @@ class X509Credentials(object):
 
     def _get_max_verify_bits(self):
         return self._max_bits
-    @method_args(int) 
     def _set_max_verify_bits(self, max_bits):
         gnutls_certificate_set_verify_limits(self._c_object, max_bits, self._max_depth)
         self._max_bits = max_bits
@@ -236,7 +230,6 @@ class Session(object):
 
     def _get_credentials(self):
         return self._credentials
-    @method_args(X509Credentials)
     def _set_credentials(self, credentials):
         ## Release all credentials, otherwise gnutls will only release an existing credential of
         ## the same type as the one being set and we can end up with multiple credentials in C.
@@ -324,7 +317,6 @@ class Session(object):
         if alert:
             gnutls_alert_send(self._c_object, GNUTLS_AL_FATAL, alert)
 
-    @method_args(one_of(SHUT_RDWR, SHUT_WR))
     def bye(self, how=SHUT_RDWR):
         gnutls_bye(self._c_object, how)
 
@@ -361,7 +353,6 @@ class ClientSession(Session):
 
     def _get_server_name(self):
         return self._server_name
-    @method_args(str)
     def _set_server_name(self, server_name):
         gnutls_server_name_set(self._c_object, GNUTLS_NAME_DNS, c_char_p(server_name), len(server_name))
         self._server_name = server_name
