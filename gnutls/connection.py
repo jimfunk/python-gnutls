@@ -346,7 +346,7 @@ class ClientSession(Session):
     session_type = GNUTLS_CLIENT
 
     def __init__(self, socket, context, server_name=None):
-        Session.__init__(self, socket, context)
+        super(ClientSession, self).__init__(socket, context)
         self._server_name = None
         if server_name is not None:
             self.server_name = server_name
@@ -364,7 +364,7 @@ class ServerSession(Session):
     session_type = GNUTLS_SERVER
 
     def __init__(self, socket, context):
-        Session.__init__(self, socket, context)
+        super(ServerSession, self).__init__(socket, context)
         gnutls_certificate_server_set_request(self._c_object, CERT_REQUEST)
 
     @property

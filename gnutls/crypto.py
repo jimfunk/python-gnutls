@@ -38,7 +38,7 @@ class X509NameMeta(type):
 class X509Name(str, metaclass=X509NameMeta):
     def __init__(self, dname):
         str.__init__(self)
-        pairs = [x.replace('\,', ',') for x in re.split(r'(?<!\\),\s*', dname)]
+        pairs = [x.replace('\,', ',') for x in re.split(r'(?<!\\),\s*', dname.decode('UTF-8'))]
         for pair in pairs:
             try:
                 name, value = pair.split('=', 1)
