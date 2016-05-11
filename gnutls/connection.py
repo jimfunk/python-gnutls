@@ -290,7 +290,6 @@ class Session(object):
         gnutls_handshake(self._c_object)
 
     def send(self, data):
-        data = str(data)
         if not data:
             return 0
         return gnutls_record_send(self._c_object, data, len(data))

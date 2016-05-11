@@ -12,10 +12,10 @@ from gnutls.connection import *
 script_path = os.path.realpath(os.path.dirname(sys.argv[0]))
 certs_path = os.path.join(script_path, 'certs')
 
-cert = X509Certificate(open(certs_path + '/valid.crt').read())
-key = X509PrivateKey(open(certs_path + '/valid.key').read())
-ca = X509Certificate(open(certs_path + '/ca.pem').read())
-crl = X509CRL(open(certs_path + '/crl.pem').read())
+cert = X509Certificate(open(certs_path + '/valid.crt', 'rb').read())
+key = X509PrivateKey(open(certs_path + '/valid.key', 'rb').read())
+ca = X509Certificate(open(certs_path + '/ca.pem', 'rb').read())
+crl = X509CRL(open(certs_path + '/crl.pem', 'rb').read())
 cred = X509Credentials(cert, key)
 context = TLSContext(cred)
 
@@ -24,9 +24,8 @@ session = ClientSession(sock, context)
 
 session.connect(('localhost', 10000))
 session.handshake()
-session.send("test\r\n")
+session.send(b"test\r\n")
 buf = session.recv(1024)
-print('Received: ', buf.rstrip())
+print('Received: ', buf.decode('UTF-8').rstrip())
 session.bye()
 session.close()
-
