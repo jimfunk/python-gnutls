@@ -5,6 +5,7 @@ __all__ = ['X509Name', 'X509Certificate', 'X509PrivateKey', 'X509Identity', 'X50
 
 import re
 from ctypes import *
+from six import with_metaclass
 
 from gnutls.constants import X509_FMT_DER, X509_FMT_PEM
 from gnutls.errors import *
@@ -35,7 +36,7 @@ class X509NameMeta(type):
         setattr(instance, name, property(lambda self: getattr(self, short_name, None)))
 
 
-class X509Name(str, metaclass=X509NameMeta):
+class X509Name(with_metaclass(X509NameMeta, str)):
     def __init__(self, dname):
         str.__init__(self)
         pairs = [x.replace('\,', ',') for x in re.split(r'(?<!\\),\s*', dname.decode('UTF-8'))]

@@ -13,7 +13,7 @@ Runtime dependencies:
  - libgnutls dependencies
  - python (>= 2.7)
 
-To build and install python-gnutls run:
+To build and install python3-gnutls run:
 
 python setup.py install
 
@@ -32,7 +32,7 @@ Runtime dependencies:
 Note: libgnutls and its dependencies can be installed from Homebre, MacPorts, Fink or
 by compiling and installing them from source.
 
-To build and install python-gnutls run:
+To build and install python3-gnutls run:
 
 python setup.py install
 
@@ -56,16 +56,16 @@ Runtime dependencies:
  - libpthreads
  - python (>= 2.7)
 
-Before building python-gnutls, copy the pthread header files (pthread.h,
+Before building python3-gnutls, copy the pthread header files (pthread.h,
 sched.h, semaphore.h) to C:\Developer\include\ and the pthread developer
 libraries (libpthread*.a and pthread*.lib) to C:\Developer\lib\ (create
 these directories first).
 
-To build and install python-gnutls run:
+To build and install python3-gnutls run:
 
 python setup.py install
 
-In order to run an application based on python-gnutls, make sure that the
+In order to run an application based on python3-gnutls, make sure that the
 DLLs mentioned in the runtime dependencies (pthread*.dll, libgnutls*.dll,
 etc) are somewhere in %PATH%
 
@@ -82,7 +82,7 @@ Runtime dependencies:
  - libgnutls dependencies
  - python (>= 2.7)
 
-To build and install python-gnutls run:
+To build and install python3-gnutls run:
 
 python setup.py install
 
