@@ -17,6 +17,7 @@ def find_packages(toplevel):
 setup(
     name=package_info.__project__,
     version=package_info.__version__,
+    install_requires=['six'],
 
     description=package_info.__summary__,
     long_description=open('README').read(),
